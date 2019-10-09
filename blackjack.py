@@ -60,6 +60,8 @@ def main():
         player_hand = []
         dealer_hand = []
         deck = make_deck()
+        bet = 10
+        player_money -= bet
         for i in range(2):
             player_hand.append(deck.pop())
             dealer_hand.append(deck.pop())
@@ -69,6 +71,32 @@ def main():
         #print(dealer_hand)
         print_dealer_hand(dealer_hand, False)
         #print(get_point(dealer_hand))
+        while True:
+            op = input('スタンド:1,ヒット：2,ダブル:3　>　')
+            if op == '1':
+                print('[プレイヤー:スタンド]')
+                break;
+            elif op == '2':
+                print('[プレイヤー:ヒット]')
+                player_hand.append(deck.pop())
+                print_player_hand(player_hand)
+            elif op == '3':
+                print('[プレイヤー:ダブル]')
+                if len(player_hand) == 2:
+                    print('[プレイヤー：ダブル]')
+                    player_money -= bet
+                    bet += bet
+                    player_hand.append(deck.pop())
+                    print_player_hand(player_hand)
+                    break
+                else:
+                    print('(ダブルはできません。　)')
+            else:
+                continue
+            if get_point(player_hand) > 21:
+                print('[ プレイヤーはバスとした！ ]')
+                break
+            
         turn += 1
         input('次のターンへ')
     print('ゲームオーバー')
