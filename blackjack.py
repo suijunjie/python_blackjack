@@ -7,6 +7,23 @@ Created on Wed Oct  9 22:01:14 2019
 
 import random
 RANK, SUIT = 0,1
+
+def win_lose(dealer_hand, palyer_hand, bet, player_money):
+    player_point = get_point(palyer_hand)
+    dealer_point = get_point(dealer_hand)
+    if player_point <= 21:
+        if(player_point > dealer_point) or (dealer_point > 21):
+            if player_point == 21:
+                return ('<< プレイヤーの勝ち>>', player_money + int(bet*2.5))
+            else:
+                return ('<<プレイヤーの勝ち>>', player_money + 2*bet)
+        elif player_point == dealer_point:
+            return ('<<プッシュ>>', player_money + bet)
+        else:
+            return ('<<プレイヤーの負け>>', player_money)
+    else:
+        return ('<<プレイヤーの負け>>', player_money)
+    
 def player_op(deck, player_hand, op):
     doubled, ending = False, False
     if op == '1':
@@ -90,14 +107,15 @@ def make_deck():
 def main():
     turn = 1
     player_money = 100
-    #deck = make_deck()
+    deck = make_deck()
     #print(deck)
     while(player_money > 0):
+        print('-'*20)
         print('ターン：', turn)
         print('所もち金：', player_money)
+        print('-'*20)
         player_hand = []
         dealer_hand = []
-        deck = make_deck()
         try:
             bet = int(input('ベット額　>'))
         except:
@@ -111,14 +129,20 @@ def main():
             continue
 
         player_money -= bet
+        
+        if len(deck) < 10:
+            deck = make_deck()
         for i in range(2):
             player_hand.append(deck.pop())
             dealer_hand.append(deck.pop())
+        
+        print('-'*20)
         #print(player_hand)
         print_player_hand(player_hand)
         #print(get_point(player_hand))
         #print(dealer_hand)
         print_dealer_hand(dealer_hand, False)
+        print('-'*20)
         #print(get_point(dealer_hand))
         while True:
             op = input('スタンド:1,ヒット：2,ダブル:3　>　')
@@ -161,6 +185,14 @@ def main():
 #                dealer_hand.append(deck.pop())
 #            print_dealer_hand(dealer_hand, False)
         dealer_op(deck, player_hand, dealer_hand)
+        print('-'*20)
+        print_player_hand(player_hand)
+        print_dealer_hand(dealer_hand, True)
+        print('-'*20)
+        
+        message, player_money = win_lose(dealer_hand, player_hand, bet, player_money)
+        print(message)
+        
         turn += 1
         input('次のターンへ')
     print('ゲームオーバー')
